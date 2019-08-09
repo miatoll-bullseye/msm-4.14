@@ -1,6 +1,6 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# Linux/arm64 4.14.211 Kernel Configuration
+# Linux/arm64 4.14.212 Kernel Configuration
 #
 CONFIG_ARM64=y
 CONFIG_64BIT=y
@@ -5926,6 +5926,12 @@ CONFIG_TDM_DISABLE=y
 # CONFIG_MI2S_DISABLE is not set
 CONFIG_AUXPCM_DISABLE=y
 CONFIG_DIGITAL_CDC_RSC_MGR=y
+
+#
+# Qualcomm RmNet extensions
+#
+CONFIG_RMNET_PERF=y
+CONFIG_RMNET_SHS=y
 
 #
 # Xiaomi configuration options
