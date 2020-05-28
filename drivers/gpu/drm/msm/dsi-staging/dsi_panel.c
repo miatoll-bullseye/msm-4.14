@@ -41,10 +41,10 @@
 #define MAX_PANEL_JITTER		10
 #define DEFAULT_PANEL_PREFILL_LINES	25
 #define TICKS_IN_MICRO_SECOND		1000000
-
-static bool lcd_esd_irq_handler = false;
-extern void lcd_esd_enable(bool en);
-
+extern void lcd_esd_enable(bool on);
+bool backlight_val;
+static int lcd_esd_irq_handler;
+char g_lcd_id[128];
 enum dsi_dsc_ratio_type {
 	DSC_8BPC_8BPP,
 	DSC_10BPC_8BPP,
@@ -3293,6 +3293,38 @@ end:
 	utils->node = panel->panel_of_node;
 }
 
+static ssize_t msm_fb_lcd_name(struct device *dev,
+		struct device_attribute *attr, char *buf)
+{
+	ssize_t ret = 0;
+	sprintf(buf, "%s\n", g_lcd_id);
+	ret = strlen(buf) + 1;
+	return ret;
+}
+
+static DEVICE_ATTR(lcd_name,0664,msm_fb_lcd_name,NULL);
+
+static struct kobject *msm_lcd_name;
+
+static int msm_lcd_name_create_sysfs(void){
+	int ret;
+	msm_lcd_name=kobject_create_and_add("android_lcd",NULL);
+
+	if(msm_lcd_name==NULL){
+		pr_debug("msm_lcd_name_create_sysfs_ failed\n");
+		ret=-ENOMEM;
+		return ret;
+	}
+
+	ret=sysfs_create_file(msm_lcd_name,&dev_attr_lcd_name.attr);
+
+	if(ret){
+		pr_info("%s failed \n",__func__);
+		kobject_del(msm_lcd_name);
+	}
+	return 0;
+}
+
 struct dsi_panel *dsi_panel_get(struct device *parent,
 				struct device_node *of_node,
 				struct device_node *parser_node,
@@ -3325,6 +3357,8 @@ struct dsi_panel *dsi_panel_get(struct device *parent,
 	else if ((strnstr(panel->name, "huaxing", strlen(panel->name))))
 		panel->special_panel = DSI_SPECIAL_PANEL_HUAXING;
 
+	strcpy(g_lcd_id,panel->name);
+	msm_lcd_name_create_sysfs();
 	/*
 	 * Set panel type to LCD as default.
 	 */
@@ -4507,3 +4541,29 @@ error:
 	mutex_unlock(&panel->panel_lock);
 	return rc;
 }
+
+int dsi_panel_set_feature(struct dsi_panel *panel,enum dsi_cmd_set_type type)
+{
+	int rc = 0;
+
+	if (!panel) {
+		pr_err("Invalid params\n");
+		return -EINVAL;
+	}
+	pr_debug("xinj:%s panel_initialized=%d type=%d backlight_val = %d\n",
+			__func__,panel->panel_initialized,type,backlight_val);
+	if (!panel->panel_initialized || !backlight_val) {
+		pr_err("xinj: con't set cmds type=%d\n",type);
+		return -EINVAL;
+	}
+	mutex_lock(&panel->panel_lock);
+
+	rc = dsi_panel_tx_cmd_set(panel, type);
+	if (rc) {
+		pr_err("[%s] failed to send DSI_CMD_SET_FEATURE_ON/OFF cmds, rc=%d,type=%d\n",
+		     panel->name, rc,type);
+	}
+	mutex_unlock(&panel->panel_lock);
+	return rc;
+}
+

@@ -24,6 +24,10 @@
 #include "sde_crtc.h"
 #include "sde_rm.h"
 
+static int esd_irq_count;
+static int tp_update_firmware = 0;
+extern void lcd_esd_handler(bool on);
+
 #define BL_NODE_NAME_SIZE 32
 
 /* Autorefresh will occur after FRAME_CNT frames. Large values are unlikely */
@@ -1839,13 +1843,12 @@ static int sde_connector_atomic_check(struct drm_connector *connector,
 	return 0;
 }
 
-static int esd_irq_count = 0;
-static bool tp_update_firmware = false;
-extern void lcd_esd_handler(bool en);
-
-void lcd_esd_enable(bool en)
+void lcd_esd_enable(bool on)
 {
-	tp_update_firmware = en;
+	if(on)
+		tp_update_firmware = 0;
+	else
+		tp_update_firmware = 1;
 }
 EXPORT_SYMBOL(lcd_esd_enable);
 
@@ -2332,7 +2335,7 @@ struct drm_connector *sde_connector_init(struct drm_device *dev,
 	struct sde_connector *c_conn = NULL;
 	struct msm_display_info display_info;
 	int rc;
-
+	esd_irq_count = 0;
 	if (!dev || !dev->dev_private || !encoder) {
 		SDE_ERROR("invalid argument(s), dev %pK, enc %pK\n",
 				dev, encoder);
