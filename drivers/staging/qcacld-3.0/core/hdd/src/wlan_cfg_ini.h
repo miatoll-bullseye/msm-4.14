@@ -1,9 +1,5 @@
 static const char wlan_cfg[] __initconst = {
 	"gDot11Mode=0\n"
-	"Intf0MacAddress=000AF58989FF\n"
-	"Intf1MacAddress=000AF58989FE\n"
-	"Intf2MacAddress=000AF58989FD\n"
-	"Intf3MacAddress=000AF58989FC\n"
 	"InfraUapsdVoSrvIntv=0\n"
 	"InfraUapsdViSrvIntv=0\n"
 	"InfraUapsdBeSrvIntv=0\n"
