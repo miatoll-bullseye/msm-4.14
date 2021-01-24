@@ -64,7 +64,6 @@ static const char wlan_cfg[] __initconst = {
 	"gEnableFastRoamInConcurrency=1\n"
 	"gMaxMediumTime = 6000\n"
 	"gRrmEnable=1\n"
-	"gEnablePowerSaveOffload=1\n"
 	"gEnablefwprint=0\n"
 	"gEnablefwlog=0\n"
 	"gVhtAmpduLenExponent=7\n"
