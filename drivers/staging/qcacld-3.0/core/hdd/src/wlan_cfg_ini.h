@@ -43,7 +43,6 @@ static const char wlan_cfg[] __initconst = {
 	"gIbssTxSpEndInactivityTime=10\n"
 	"gEnableTDLSSupport=1\n"
 	"gEnableTDLSImplicitTrigger=1\n"
-	"gEnableTDLSOffChannel=1\n"
 	"gVhtRxMCS=2\n"
 	"gVhtTxMCS=2\n"
 	"gEnable2x2=1\n"
