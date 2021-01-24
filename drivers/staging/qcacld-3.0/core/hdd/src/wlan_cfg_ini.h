@@ -148,7 +148,6 @@ static const char wlan_cfg[] __initconst = {
 	"gRoamBmissFinalBcnt=20\n"
 	"gper_roam_enabled=3\n"
 	"arp_ac_category=0\n"
-	"gEnableLPRx=0\n"
 	"gEnableSelfRecovery=1\n"
 	"enable_ftopen=0\n"
 	"gReportMaxLinkSpeed=2\n"
